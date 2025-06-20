@@ -1,0 +1,44 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Hide scrollbars */
+    background-color: #000; /* Ensure black background for seamless full-screen */
+    display: flex; /* Use flexbox on body to center content-wrapper */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+#content-wrapper {
+    /* This wrapper helps in centering and providing max dimensions for the media box */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#media-display {
+    /* This is the box that contains your video/image */
+    max-width: 90vw; /* Maximum width is 90% of viewport width */
+    max-height: 90vh; /* Maximum height is 90% of viewport height */
+    width: 100%; /* Ensure it takes full width up to max-width */
+    height: 100%; /* Ensure it takes full height up to max-height */
+    display: flex; /* Use flexbox to center content inside this box */
+    justify-content: center;
+    align-items: center;
+    background-color: #000; /* Black background for any letterboxing when object-fit: contain */
+    position: relative; /* Needed if you ever add absolute positioned overlays */
+    /* You can uncomment and set a specific aspect ratio here if desired, e.g., for 16:9: */
+    /* aspect-ratio: 16 / 9; */
+}
+
+/* Styles for the video and image inside the media-display box */
+#birthday-video,
+#door-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* This is key! It scales the media to fit within the box while maintaining aspect ratio. */
+    display: block; /* Remove any extra space below inline elements */
+}

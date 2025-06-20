@@ -11,7 +11,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000;
+            background-color: #000; /* This color will show as bars if aspect ratios differ */
         }
         #media-container {
             width: 100vw;
@@ -24,7 +24,8 @@
         #media-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* This is key to filling the screen without distortion */
+            /* This is the updated property to ensure the whole media is visible */
+            object-fit: contain;
         }
     </style>
 </head>
@@ -34,7 +35,7 @@
     <script>
         // --- Configuration ---
         const friendsBirthday = '06-20'; // IMPORTANT: Set your friend's birthday in MM-DD format.
-        const totalDoorImages = 1;     // The total number of door images in your /images folder.
+        const totalDoorImages = 30;     // The total number of door images in your /images folder.
 
         // --- Logic ---
         document.addEventListener('DOMContentLoaded', () => {

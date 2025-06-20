@@ -3,14 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Gift For You!</title>
-    </head>
+    <title>A Special Day</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+        #media-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #media-container video,
+        #media-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* This is key to filling the screen without distortion */
+        }
+    </style>
+</head>
 <body>
-    <div id="content-wrapper">
-        <div id="media-display">
-            <img src="file:///C:/Users/Joseph/Desktop/New%20folder%20(4)/N-birth/images/door1.jpg" alt="Test Door">
+    <div id="media-container"></div>
 
-            </div>
-    </div>
-    </body>
+    <script>
+        // --- Configuration ---
+        const friendsBirthday = '06-20'; // IMPORTANT: Set your friend's birthday in MM-DD format.
+        const totalDoorImages = 30;     // The total number of door images in your /images folder.
+
+        // --- Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const mediaContainer = document.getElementById('media-container');
+
+            const today = new Date();
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
+            const day = String(today.getDate()).padStart(2, '0');
+            const formattedToday = `${month}-${day}`;
+            const todayDateString = today.toISOString().split('T')[0]; // YYYY-MM-DD format for caching
+
+            if (formattedToday === friendsBirthday) {
+                // --- Birthday Logic: Autoplay Video ---
+                const video = document.createElement('video');
+                video.src = 'video/birthday.mp4';
+                video.autoplay = true;
+                video.muted = true; // Autoplay in most browsers requires the video to be muted.
+                video.loop = false;
+                video.playsInline = true;
+                video.addEventListener('ended', () => {
+                    // Optional: You can add behavior here for when the video ends.
+                    // For now, it just stops on the last frame.
+                });
+                mediaContainer.appendChild(video);
+
+            } else {
+                // --- Regular Day Logic: Display Random Door Image ---
+                const cachedImageData = localStorage.getItem('dailyDoorImage');
+                let imageUrl;
+
+                if (cachedImageData) {
+                    const { date, path } = JSON.parse(cachedImageData);
+                    if (date === todayDateString) {
+                        imageUrl = path; // Use cached image if the date matches
+                    }
+                }
+
+                if (!imageUrl) {
+                    // No valid cache, so select a new image
+                    const randomDoorNumber = Math.floor(Math.random() * totalDoorImages) + 1;
+                    imageUrl = `images/door${randomDoorNumber}.jpg`;
+                    // Cache the new image path and today's date
+                    localStorage.setItem('dailyDoorImage', JSON.stringify({ date: todayDateString, path: imageUrl }));
+                }
+
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = 'A mysterious door';
+                mediaContainer.appendChild(img);
+            }
+        });
+    </script>
+</body>
 </html>

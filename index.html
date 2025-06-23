@@ -19,12 +19,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: pointer; /* Indicates the image is clickable */
         }
         #media-container video,
         #media-container img {
             width: 100%;
             height: 100%;
-            /* This is the updated property to ensure the whole media is visible */
+            /* This ensures the whole media is visible */
             object-fit: contain;
         }
     </style>
@@ -35,7 +36,9 @@
     <script>
         // --- Configuration ---
         const friendsBirthday = '06-20'; // IMPORTANT: Set your friend's birthday in MM-DD format.
-        const totalDoorImages = 1;     // The total number of door images in your /images folder.
+        const totalDoorImages = 1;      // The total number of door images in your /images folder.
+        // NEW: The image to show on the birthday before the video plays.
+        const birthdayPresentImage = 'images/present.jpg'; 
 
         // --- Logic ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -48,21 +51,36 @@
             const todayDateString = today.toISOString().split('T')[0]; // YYYY-MM-DD format for caching
 
             if (formattedToday === friendsBirthday) {
-                // --- Birthday Logic: Autoplay Video ---
-                const video = document.createElement('video');
-                video.src = 'video/birthday.mp4';
-                video.autoplay = true;
-                video.muted = true; // Autoplay in most browsers requires the video to be muted.
-                video.loop = false;
-                video.playsInline = true;
-                video.addEventListener('ended', () => {
-                    // Optional: You can add behavior here for when the video ends.
-                    // For now, it just stops on the last frame.
-                });
-                mediaContainer.appendChild(video);
+                // --- Birthday Logic: Show a static image first, then play video on click ---
+                
+                // 1. Create and display the static "present" image
+                const presentImg = document.createElement('img');
+                presentImg.src = birthdayPresentImage;
+                presentImg.alt = 'A Special Surprise!';
+                mediaContainer.appendChild(presentImg);
+
+                // 2. Listen for a click on the container
+                mediaContainer.addEventListener('click', () => {
+                    // 3. Once clicked, remove the image and play the video
+                    mediaContainer.innerHTML = ''; // Clear the container
+                    mediaContainer.style.cursor = 'default'; // Remove the pointer cursor
+
+                    const video = document.createElement('video');
+                    // IMPORTANT: The video is now in the 'videos' folder
+                    video.src = 'videos/birthday.mp4'; 
+                    video.autoplay = true;
+                    video.muted = true;    // Autoplay requires the video to be muted initially.
+                    video.controls = true; // Allows the user to unmute and control playback.
+                    video.loop = false;
+                    video.playsInline = true;
+                    
+                    mediaContainer.appendChild(video);
+
+                }, { once: true }); // The event listener will only run once.
 
             } else {
                 // --- Regular Day Logic: Display Random Door Image ---
+                mediaContainer.style.cursor = 'default'; // No cursor needed for doors
                 const cachedImageData = localStorage.getItem('dailyDoorImage');
                 let imageUrl;
 

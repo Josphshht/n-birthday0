@@ -19,7 +19,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer; /* Indicates the image is clickable */
         }
         #media-container video,
         #media-container img {
@@ -36,9 +35,8 @@
     <script>
         // --- Configuration ---
         const friendsBirthday = '06-20'; // IMPORTANT: Set your friend's birthday in MM-DD format.
-        const totalDoorImages = 1;      // The total number of door images in your /images folder.
-        // NEW: The image to show on the birthday before the video plays.
-        const birthdayPresentImage = 'images/present.jpg'; 
+        // NEW: Set the path to the one static door image you want to show on other days.
+        const staticDoorImage = 'images/door.jpg'; 
 
         // --- Logic ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -48,59 +46,23 @@
             const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
             const day = String(today.getDate()).padStart(2, '0');
             const formattedToday = `${month}-${day}`;
-            const todayDateString = today.toISOString().split('T')[0]; // YYYY-MM-DD format for caching
-
+            
             if (formattedToday === friendsBirthday) {
-                // --- Birthday Logic: Show a static image first, then play video on click ---
+                // --- Birthday Logic: Autoplay Video ---
+                const video = document.createElement('video');
+                video.src = 'videos/birthday.mp4'; // The video is in the 'videos' folder
+                video.autoplay = true;
+                video.muted = true; // Autoplay in most browsers requires the video to be muted.
+                video.controls = true; // Allow user to unmute and control the video
+                video.loop = false;
+                video.playsInline = true;
                 
-                // 1. Create and display the static "present" image
-                const presentImg = document.createElement('img');
-                presentImg.src = birthdayPresentImage;
-                presentImg.alt = 'A Special Surprise!';
-                mediaContainer.appendChild(presentImg);
-
-                // 2. Listen for a click on the container
-                mediaContainer.addEventListener('click', () => {
-                    // 3. Once clicked, remove the image and play the video
-                    mediaContainer.innerHTML = ''; // Clear the container
-                    mediaContainer.style.cursor = 'default'; // Remove the pointer cursor
-
-                    const video = document.createElement('video');
-                    // IMPORTANT: The video is now in the 'videos' folder
-                    video.src = 'videos/birthday.mp4'; 
-                    video.autoplay = true;
-                    video.muted = true;    // Autoplay requires the video to be muted initially.
-                    video.controls = true; // Allows the user to unmute and control playback.
-                    video.loop = false;
-                    video.playsInline = true;
-                    
-                    mediaContainer.appendChild(video);
-
-                }, { once: true }); // The event listener will only run once.
+                mediaContainer.appendChild(video);
 
             } else {
-                // --- Regular Day Logic: Display Random Door Image ---
-                mediaContainer.style.cursor = 'default'; // No cursor needed for doors
-                const cachedImageData = localStorage.getItem('dailyDoorImage');
-                let imageUrl;
-
-                if (cachedImageData) {
-                    const { date, path } = JSON.parse(cachedImageData);
-                    if (date === todayDateString) {
-                        imageUrl = path; // Use cached image if the date matches
-                    }
-                }
-
-                if (!imageUrl) {
-                    // No valid cache, so select a new image
-                    const randomDoorNumber = Math.floor(Math.random() * totalDoorImages) + 1;
-                    imageUrl = `images/door${randomDoorNumber}.jpg`;
-                    // Cache the new image path and today's date
-                    localStorage.setItem('dailyDoorImage', JSON.stringify({ date: todayDateString, path: imageUrl }));
-                }
-
+                // --- Regular Day Logic: Display a single, static door image ---
                 const img = document.createElement('img');
-                img.src = imageUrl;
+                img.src = staticDoorImage; // Use the static image path defined above
                 img.alt = 'A mysterious door';
                 mediaContainer.appendChild(img);
             }

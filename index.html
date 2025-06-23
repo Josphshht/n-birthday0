@@ -11,7 +11,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000; /* This color will show as bars if aspect ratios differ */
+            background-color: #000;
         }
         #media-container {
             width: 100vw;
@@ -24,7 +24,6 @@
         #media-container img {
             width: 100%;
             height: 100%;
-            /* This ensures the whole media is visible */
             object-fit: contain;
         }
     </style>
@@ -34,27 +33,28 @@
 
     <script>
         // --- Configuration ---
-        const friendsBirthday = '06-23'; // IMPORTANT: Set your friend's birthday in MM-DD format.
-        // NEW: Set the path to the one static door image you want to show on other days.
-        const staticDoorImage = 'images/door.jpg'; 
+        const friendsBirthday = '06-20'; // IMPORTANT: Set your friend's birthday in MM-DD format.
+        const staticDoorImage = 'images/door.jpg'; // The static door image for other days.
+
+        // The DIRECT link to your video file for the best performance.
+        const birthdayVideoUrl = 'https://res.cloudinary.com/dcy5w5qhd/video/upload/v1/1F4099a2-8A1a-4187-9C80-44E6da177679_d3yqlo.mp4';
 
         // --- Logic ---
         document.addEventListener('DOMContentLoaded', () => {
             const mediaContainer = document.getElementById('media-container');
 
             const today = new Date();
-            const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
+            const month = String(today.getMonth() + 1).padStart(2, '0');
             const day = String(today.getDate()).padStart(2, '0');
             const formattedToday = `${month}-${day}`;
             
             if (formattedToday === friendsBirthday) {
-                // --- Birthday Logic: Autoplay Video ---
+                // --- Birthday Logic: Autoplay Video using the <video> tag ---
                 const video = document.createElement('video');
-                // Paste the direct link from your hosting service here
-                video.src = 'https://player.cloudinary.com/embed/?cloud_name=dcy5w5qhd&public_id=1F4099a2-8A1a-4187-9C80-44E6da177679_d3yqlo&profile=cld-default'; 
+                video.src = birthdayVideoUrl;
                 video.autoplay = true;
-                video.muted = true; // Autoplay in most browsers requires the video to be muted.
-                video.controls = true; // Allow user to unmute and control the video
+                video.muted = true; // Autoplay requires video to be muted.
+                video.controls = true; // Allows user to unmute and control video.
                 video.loop = false;
                 video.playsInline = true;
                 
@@ -63,7 +63,7 @@
             } else {
                 // --- Regular Day Logic: Display a single, static door image ---
                 const img = document.createElement('img');
-                img.src = staticDoorImage; // Use the static image path defined above
+                img.src = staticDoorImage;
                 img.alt = 'A mysterious door';
                 mediaContainer.appendChild(img);
             }
